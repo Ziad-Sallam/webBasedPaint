@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<canvas>
+    <rect>
+        <fill>blue</fill>
+        <strokeWidth>0</strokeWidth>
+        <x>10</x>
+        <y>10</y>
+    </rect>
+    <circle>
+        <fill>green</fill>
+        <strokeWidth>0</strokeWidth>
+        <x>10</x>
+        <y>10</y>
+        <radius>7</radius>
+    </circle>
+    <triangle>
+        <fill>red</fill>
+        <strokeWidth>0</strokeWidth>
+        <x>5</x>
+        <y>3</y>
+        <radius>0</radius>
+    </triangle>
+</canvas>
