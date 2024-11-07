@@ -21,7 +21,10 @@ img{
   cursor: pointer;
 }
 
-svg{
+svg {
+  cursor: pointer;
+}
+i{
   cursor: pointer;
 }
 
@@ -40,14 +43,14 @@ button{
   height: 20px; 
 }
 
-
 .container{
   display: flex;
   width: 100%;
   max-width: 1050px;
   gap: 10px;
   padding: 10px;
-  max-width: 1050px;
+
+
 }
 
 section{
@@ -56,7 +59,8 @@ section{
 }
 
 .tools{
-  height: 700px;
+  height: 50%;
+  width: 60vw;
   padding: 10px 10px 0;
 }
 
@@ -70,5 +74,6 @@ section{
 }
 .screen{
   background-color: white;
-  width: 700px;
+  width: 90%;
+  height: 100vh;
 }

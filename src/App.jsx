@@ -217,21 +217,21 @@ function App() {
             <label className="shapes">Shapes</label>
             <br/>
             <button id={"arrow"} className={"arrow btn " + (arrowBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
-              <i className="arrow bi bi-arrow-up-right"></i>
+              <i id={"arrow"} className="arrow bi bi-arrow-up-right"></i>
             </button>
 
             <button id={"circle"} className={"circle btn " + (circleBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
-              <i className={"circle bi bi-circle"}/>
+              <i id={"circle"} className={"circle bi bi-circle"}/>
             </button>
 
             <button id={"square"} className={"square btn " + (squareBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}><i
-                className="square bi bi-square"></i></button>
+                id={"square"} className="square bi bi-square"></i></button>
 
-            <button id={"triangle"} className={"triangle btn " + (triangleBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}><i className="triangle bi bi-triangle"></i></button>
+            <button id={"triangle"} className={"triangle btn " + (triangleBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}><i id={"triangle"} className="triangle bi bi-triangle"></i></button>
 
             <button id={"ellipse"} className={"ellipse btn " + (ellipseBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
-              <svg width={25} height={15} className={"ellipse"}>
-                <ellipse className={"ellipse"} cx="8" cy="5" rx="8" ry="4" stroke="black" strokeWidth="1" fill="none"/>
+              <svg id={"ellipse"} width={25} height={15} className={"ellipse"}>
+                <ellipse id={"ellipse"} className={"ellipse"} cx="8" cy="5" rx="8" ry="4" stroke="black" strokeWidth="1" fill="none"/>
               </svg>
             </button>
           </div>
@@ -241,20 +241,20 @@ function App() {
 
         <div className="component">
           <button id={"brush"} className={"brush btn " + (brushBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
-            <label className='brush'><i className="brush bi bi-brush"></i> Brush</label>
+            <label className='brush'><i id={"brush"} className="brush bi bi-brush"></i> Brush</label>
           </button>
         </div>
 
         <div className="component">
           <button id={"eraser"} className={"eraser btn " + (eraseBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
-            <label className='eraser'><i className="eraser bi bi-eraser"></i> Eraser</label>
+            <label className='eraser'><i id={"eraser"} className="eraser bi bi-eraser"></i> Eraser</label>
           </button>
         </div>
 
 
       <div className="component">
           <button id={"text"} className={"text btn " + (textBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
-            <label className='text'><i className="text bi bi-fonts"></i> Add text</label>
+            <label className='text'><i id={"text"} className="text bi bi-fonts"></i> Add text</label>
           </button>
       </div>
 
@@ -297,8 +297,8 @@ function App() {
 
       <div className="screen">
         <Stage
-          width={1000}
-          height={700}
+          width={window.innerWidth*0.9}
+          height={window.innerHeight}
           onMouseDown={onStageMouseDown}
           onMouseMove={onStageMouseMove}
           onMouseUp={onStageMouseUp}
