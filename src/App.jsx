@@ -1,15 +1,7 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import rectangleIcon from './icons/icons/rectangle.svg';
-import triangleIcon from './icons/icons/triangle.svg';
-import circleIcon from './icons/icons/circle.svg';
-import brushIcon from './icons/icons/brush.svg';
-import eraserIcon from './icons/icons/eraser.svg';
-import textIcon from './icons/icons/type.svg';
-import undoIcon from './icons/icons/rotate-ccw.svg';
-import redoIcon from './icons/icons/rotate-cw.svg';
-import saveIcon from './icons/icons/upload.svg';
-import clearIcon from './icons/icons/trash.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
 import './App.css'
 import { KonvaEventObject } from "konva/lib/Node";
 
@@ -47,7 +39,17 @@ function App() {
   const [rectangles, setRectangles] = useState([]);
   const [arrows, setArrows] = useState([]);
   const [triangles, setTriangles] = useState([]); 
-  const [ellipses, setEllipses] = useState([]);   
+  const [ellipses, setEllipses] = useState([]);
+
+  const [circleBtn, setCircleBtn] = useState(false);
+  const [squareBtn, setSquareBtn] = useState(false);
+  const [triangleBtn, setTriangleBtn] = useState(false);
+  const [ellipseBtn, setEllipseBtn] = useState(false);
+  const [arrowBtn, setArrowBtn] = useState(false);
+  const [brushBtn, setBrushBtn] = useState(true);
+  const [eraseBtn, setEraseBtn] = useState(false);
+  const [textBtn, setTextBtn] = useState(false);
+
 
   const stageRef = useRef(null);
   const isDrawingRef = useRef(false);
@@ -95,8 +97,6 @@ function App() {
         break;
     }
   }, [drawAction, color,strokeWidth]);
-
-
 
 
   const onStageMouseMove = useCallback(() => {
@@ -154,13 +154,56 @@ function App() {
     }
   }, [drawAction]);
 
+  function handleClick(e){
 
+    const btnId = e.target.id;
+    const x = e.target.className;
+    setArrowBtn(false);
+    setBrushBtn(false);
+    setCircleBtn(false);
+    setEllipseBtn(false);
+    setTextBtn(false);
+    setEraseBtn(false);
+    setTriangleBtn(false);
+    setSquareBtn(false);
 
+    switch(btnId || x) {
+      case "arrow":
+        setArrowBtn(true);
+        setDrawAction(DrawAction.Arrow);
 
+        break;
+      case "circle":
+        setCircleBtn(true);
+        setDrawAction(DrawAction.Circle);
+        break;
+      case "square":
+        setSquareBtn(true);
+        setDrawAction(DrawAction.Rectangle);
+        break;
+      case "ellipse":
+        setEllipseBtn(true);
+        setDrawAction(DrawAction.Ellipse);
+        break;
+      case "brush":
+        setBrushBtn(true);
+        setDrawAction(DrawAction.Scribble);
+        break;
+      case "eraser":
+        setEraseBtn(true);
+        break;
 
+        case "triangle":
+          setTriangleBtn(true);
+          setDrawAction(DrawAction.Triangle);
+          break;
+      case "text":
+        setTextBtn(true);
+        break;
 
+    }
+  }
 
-  
 
   const onStageMouseUp = useCallback(() => {
     isDrawingRef.current = false;
@@ -170,46 +213,61 @@ function App() {
     <div className="container">
       <section className="tools">
         <div className="component">
-          <label className="shapes">Shapes</label>
-          <br />
-          <svg width="25" height="29" onClick={() => setDrawAction(DrawAction.Arrow)}>
-            <line x1="5" y1="20" x2="23" y2="20" stroke="black" strokeWidth="2" />
-          </svg>
-          <img src={circleIcon} onClick={() => setDrawAction(DrawAction.Circle)} />
-          <img src={rectangleIcon} onClick={() => setDrawAction(DrawAction.Rectangle)} />
-          <img src={triangleIcon} onClick={() => setDrawAction(DrawAction.Triangle)} />
-          <svg width={25} height={15} onClick={() => setDrawAction(DrawAction.Ellipse)}>
-            <ellipse cx="12" cy="7" rx="10" ry="6" stroke="black" strokeWidth="2" fill="white" />
-          </svg>
-        </div>
-          <hr></hr>
+          <div className={"shapes"}>
+            <label className="shapes">Shapes</label>
+            <br/>
+            <button id={"arrow"} className={"arrow btn " + (arrowBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+              <i className="arrow bi bi-arrow-up-right"></i>
+            </button>
 
+            <button id={"circle"} className={"circle btn " + (circleBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+              <i className={"circle bi bi-circle"}/>
+            </button>
+
+            <button id={"square"} className={"square btn " + (squareBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}><i
+                className="square bi bi-square"></i></button>
+
+            <button id={"triangle"} className={"triangle btn " + (triangleBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}><i className="triangle bi bi-triangle"></i></button>
+
+            <button id={"ellipse"} className={"ellipse btn " + (ellipseBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+              <svg width={25} height={15} className={"ellipse"}>
+                <ellipse className={"ellipse"} cx="8" cy="5" rx="8" ry="4" stroke="black" strokeWidth="1" fill="none"/>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+        <hr></hr>
 
         <div className="component">
-          <img src={brushIcon} onClick={() => setDrawAction(DrawAction.Scribble)}></img>
-          <label className='brush'> Brush</label>
-          </div>
+          <button id={"brush"} className={"brush btn " + (brushBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+            <label className='brush'><i className="brush bi bi-brush"></i> Brush</label>
+          </button>
+        </div>
+
+        <div className="component">
+          <button id={"eraser"} className={"eraser btn " + (eraseBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+            <label className='eraser'><i className="eraser bi bi-eraser"></i> Eraser</label>
+          </button>
+        </div>
+
+
+      <div className="component">
+          <button id={"text"} className={"text btn " + (textBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+            <label className='text'><i className="text bi bi-fonts"></i> Add text</label>
+          </button>
+      </div>
+
+        <hr></hr>
 
           <div className="component">
-          <img src={eraserIcon} ></img>
-          <label className='eraser'> Eraser</label>
-          </div>
-
-          <div className="component">
-          <img src={textIcon} ></img>
-          <label className='text'> Add text</label>
-          </div>
-
-          <hr></hr>
-
-          <div className="component">
-          <input type="color" id="favcolor" onChange={(e) => setColor(e.target.value)} ></input>
+          <input className={"form-control form-control-color"} type="color" id="favcolor" onChange={(e) => setColor(e.target.value)} ></input>
           <label for="favcolor">  Color</label>
           </div>
 
           <div className="component">
           <label for="size">Thickness</label>
-          <input type="range" id="size" 
+          <input className={"form-range"} type="range" id="size"
           min="1"
           max="10"
           value={strokeWidth} onChange={(e) => setStrokeWidth(Number(e.target.value))}></input>
@@ -218,28 +276,29 @@ function App() {
           <hr></hr>
 
           <div className="component">
-          <button id="clear"  onClick={handleClear}><img src={clearIcon} className='button-icon' />clear</button>
+          <button className={"btn btn-outline-dark"} id="clear" onClick={handleClear}>
+            <i className="bi bi-trash"></i> clear
+          </button>
           </div>
 
-          <div className="component">
-          <button id="undo"><img src={undoIcon} className='button-icon'/>undo</button>
-          </div>
+        <div className="component">
+          <button id="undo" className={"btn btn-outline-dark"}><i className="bi bi-arrow-counterclockwise"></i> undo</button>
+        </div>
 
-          <div className="component">
-          <button id="redo"><img src={redoIcon} className='button-icon'/>redo</button>
-          </div>
+        <div className="component">
+          <button id="redo" className={"btn btn-outline-dark"}><i className="bi bi-arrow-clockwise"></i> redo</button>
+        </div>
 
-          <div className="component">
-          <button id="save"><img src={saveIcon} className='button-icon'/>save</button>
-          </div>
+        <div className="component">
+          <button id="save" className={"btn btn-outline-dark"}><i className="bi bi-floppy"></i> save</button>
+        </div>
 
       </section>
-      
 
       <div className="screen">
         <Stage
           width={1000}
-          height={500}
+          height={700}
           onMouseDown={onStageMouseDown}
           onMouseMove={onStageMouseMove}
           onMouseUp={onStageMouseUp}

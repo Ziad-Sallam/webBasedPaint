@@ -26,8 +26,7 @@ svg{
 }
 
 button{
-  width: 100px;
-  height: 25px;
+
   display: flex; 
   align-items: center;
   cursor: pointer;
@@ -57,14 +56,17 @@ section{
 }
 
 .tools{
-
-  height: 550px;
+  height: 700px;
   padding: 10px 10px 0;
 }
 
 .component {
   padding: 7px;
-  width: 180px;
+  width: 190px;
+}
+.shapes button{
+  border: none;
+  width: 35px;
 }
 .screen{
   background-color: white;
