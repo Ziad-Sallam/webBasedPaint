@@ -68,6 +68,14 @@ section{
 
 .page{
   flex: 1;
-  width: 500px;
+  width: 700px;
 }
 
+#favcolor{
+  width:25px;
+  margin-right: 8px;
+}
+
+#size{
+  margin-top: 5px;
+}

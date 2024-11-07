@@ -65,15 +65,15 @@ function App() {
           </div>
 
           <div className="component">
-          <img src={textIcon} ></img>
-          <label className='text'> Add text</label>
+          <img src={textIcon} width="22" height="20"></img>
+          <label className='text'>Add text</label>
           </div>
 
           <hr></hr>
 
           <div className="component">
-          <input type="color" id="favcolor" value="black"></input>
-          <label for="favcolor">   Color</label>
+          <input type="color" id="favcolor"></input>
+          <label for="favcolor">Color</label>
           </div>
 
           <div className="component">
