@@ -57,17 +57,16 @@ section{
 }
 
 .tools{
-  width: 210px;
+
   height: 550px;
   padding: 10px 10px 0;
 }
 
 .component {
   padding: 7px;
+  width: 180px;
 }
-
-.page{
-  flex: 1;
-  width: 500px;
+.screen{
+  background-color: white;
+  width: 700px;
 }
-
