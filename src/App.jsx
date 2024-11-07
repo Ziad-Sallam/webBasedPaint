@@ -46,8 +46,8 @@ function App() {
   const [circles, setCircles] = useState([]);
   const [rectangles, setRectangles] = useState([]);
   const [arrows, setArrows] = useState([]);
-  const [triangles, setTriangles] = useState([]); // State for triangles
-  const [ellipses, setEllipses] = useState([]);   // State for ellipses
+  const [triangles, setTriangles] = useState([]); 
+  const [ellipses, setEllipses] = useState([]);   
 
   const stageRef = useRef(null);
   const isDrawingRef = useRef(false);
