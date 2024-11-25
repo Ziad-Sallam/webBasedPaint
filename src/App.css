@@ -77,3 +77,6 @@ section{
   width: 90%;
   height: 100vh;
 }
+.hidden{
+  display: none;
+}

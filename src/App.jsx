@@ -1,9 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+import { Transformer } from 'react-konva';
 
 import './App.css'
 import { KonvaEventObject } from "konva/lib/Node";
+
 
 import { useState, useRef, useCallback } from "react";
 import {
@@ -15,7 +17,7 @@ import {
   Arrow as KonvaArrow,
   RegularPolygon as KonvaTriangle,
   Ellipse as KonvaEllipse,
-  Ellipse,
+  Text as KonvaText,
 } from "react-konva";
 import { v4 as uuidv4 } from "uuid";
 
@@ -26,13 +28,16 @@ const DrawAction = {
   Arrow: 'Arrow',
   Eraser: 'Eraser',
   Select: 'Select',
-  Triangle: 'Triangle',    // Added Triangle action
-  Ellipse: 'Ellipse',      // Added Ellipse action
+  Triangle: 'Triangle',    
+  Ellipse: 'Ellipse',
+  Text: 'Text',    
 };
 
 function App() {
   const [drawAction, setDrawAction] = useState(DrawAction.Scribble);
   const [color, setColor] = useState('black');
+  const [previousColor, setPreviousColor] = useState('black');
+  const [eraserMode, setEraserMode] = useState(false);
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [scribbles, setScribbles] = useState([]);
   const [circles, setCircles] = useState([]);
@@ -40,6 +45,8 @@ function App() {
   const [arrows, setArrows] = useState([]);
   const [triangles, setTriangles] = useState([]); 
   const [ellipses, setEllipses] = useState([]);
+  const [texts, setTexts] = useState([]);
+  const [inputText, setinputText] = useState("");
 
   const [circleBtn, setCircleBtn] = useState(false);
   const [squareBtn, setSquareBtn] = useState(false);
@@ -54,8 +61,23 @@ function App() {
   const stageRef = useRef(null);
   const isDrawingRef = useRef(false);
   const currentShapeRef = useRef(null);
+  const transformerRef = useRef(null);
 
 
+
+  const [selectedShape, setSelectedShape] = useState(null);
+  
+
+  const onShapeClick = useCallback(
+    (e) => {
+      if (drawAction !== DrawAction.Select) return;
+      const currentTarget = e.target;
+      setSelectedShape(currentTarget);
+      transformerRef.current.nodes([currentTarget]);
+      transformerRef.current.getLayer().batchDraw();
+    },
+    [drawAction]
+  );
   const handleClear = () => {
     setScribbles([]);
     setCircles([]);
@@ -63,40 +85,55 @@ function App() {
     setArrows([]);
     setEllipses([]);
     setTriangles([]);
-   
+    setTexts([]);
   };
 
   const onStageMouseDown = useCallback((e) => {
-    isDrawingRef.current = true;
     const stage = stageRef.current;
-    const pos = stage.getPointerPosition();
-    const x = pos.x;
-    const y = pos.y;
-    const id = uuidv4();
-
-    currentShapeRef.current = id;
-
+    const clickedOnStage = e.target === stage;
+  
+    // Handle deselection if in "Select" mode
+    if (clickedOnStage && drawAction === DrawAction.Select) {
+      setSelectedShape(null);
+      transformerRef.current.nodes([]);
+      transformerRef.current.getLayer()?.batchDraw();
+      return;
+    }
+  
+    // Proceed with drawing logic only if not in "Select" mode
+    if (drawAction !== DrawAction.Select) {
+      isDrawingRef.current = true;
+      const pos = stage.getPointerPosition();
+      const x = pos.x;
+      const y = pos.y;
+      const id = uuidv4();
+  
+      currentShapeRef.current = id;
     switch (drawAction) {
+      
       case DrawAction.Scribble:
-        setScribbles((prev) => [...prev, { id, points: [x, y], color ,strokeWidth}]);
+        setScribbles((prev) => [...prev, { id, points: [x, y], color, strokeWidth }]);
         break;
       case DrawAction.Circle:
-        setCircles((prev) => [...prev, { id, radius: 1, x, y, color,strokeWidth }]);
+        setCircles((prev) => [...prev, { id, radius: 1, x, y, color, strokeWidth }]);
         break;
       case DrawAction.Rectangle:
-        setRectangles((prev) => [...prev, { id, width: 1, height: 1, x, y, color ,strokeWidth}]);
+        setRectangles((prev) => [...prev, { id, width: 1, height: 1, x, y, color, strokeWidth }]);
         break;
       case DrawAction.Arrow:
-        setArrows((prev) => [...prev, { id, points: [x, y, x, y], color,strokeWidth }]);
+        setArrows((prev) => [...prev, { id, points: [x, y, x, y], color, strokeWidth }]);
         break;
       case DrawAction.Triangle:
-        setTriangles((prev) => [...prev, { id, x, y, width: 1, height: 1, color,strokeWidth }]);
+        setTriangles((prev) => [...prev, { id, x, y, width: 1, height: 1, color, strokeWidth }]);
         break;
       case DrawAction.Ellipse:
-        setEllipses((prev) => [...prev, { id, x, y, radiusX: 1, radiusY: 1, color,strokeWidth }]);
+        setEllipses((prev) => [...prev, { id, x, y, radiusX: 1, radiusY: 1, color, strokeWidth }]);
         break;
-    }
-  }, [drawAction, color,strokeWidth]);
+      case DrawAction.Text:
+        setTexts((prev) => [...prev,{id, x, y, text:inputText , frontsize: 20, fill: color}]);
+        break;
+    }}
+  }, [drawAction, color, strokeWidth]);
 
 
   const onStageMouseMove = useCallback(() => {
@@ -152,6 +189,13 @@ function App() {
           )
         );
         break;
+      case DrawAction.Text:
+        setTexts((prev) =>
+          prev.map((texts) =>
+            texts.id === currentShapeRef.current ? { ...texts} : texts
+          )
+        );
+        break;
     }
   }, [drawAction]);
 
@@ -169,44 +213,72 @@ function App() {
     setEraseBtn(false);
     setTriangleBtn(false);
     setSquareBtn(false);
-
     switch(btnId || x) {
       case "arrow":
         setArrowBtn(true);
         setDrawAction(DrawAction.Arrow);
-
+        if (eraserMode) {
+          setColor(previousColor); 
+        }
+        setEraserMode(false);
         break;
       case "circle":
         setCircleBtn(true);
         setDrawAction(DrawAction.Circle);
+        if (eraserMode) {
+          setColor(previousColor); 
+        }
+        setEraserMode(false);
         break;
       case "square":
         setSquareBtn(true);
         setDrawAction(DrawAction.Rectangle);
+        if (eraserMode) {
+          setColor(previousColor); 
+        }
+        setEraserMode(false);
+
         break;
       case "ellipse":
         setEllipseBtn(true);
         setDrawAction(DrawAction.Ellipse);
+        if (eraserMode) {
+          setColor(previousColor); 
+        }
+        setEraserMode(false);
         break;
       case "brush":
         setBrushBtn(true);
         setDrawAction(DrawAction.Scribble);
+        if (eraserMode) {
+          setColor(previousColor); 
+        }
+        setEraserMode(false);
         break;
       case "eraser":
         setEraseBtn(true);
+        setDrawAction(DrawAction.Scribble);
+        if (!eraserMode) {
+          setPreviousColor(color); 
+        }
+        setEraserMode(true); 
+        setColor('white');
         break;
 
         case "triangle":
           setTriangleBtn(true);
           setDrawAction(DrawAction.Triangle);
+          if (eraserMode) {
+            setColor(previousColor);
+          }
+          setEraserMode(false);
           break;
-      case "text":
-        setTextBtn(true);
-        break;
-
+        case "text":
+            setTextBtn(true);
+            setDrawAction(DrawAction.Text);
+            break;
     }
   }
-
 
   const onStageMouseUp = useCallback(() => {
     isDrawingRef.current = false;
@@ -260,6 +332,8 @@ function App() {
           <button id={"text"} className={"text btn " + (textBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
             <label className='text'><i id={"text"} className="text bi bi-fonts"></i> Add text</label>
           </button>
+          <input type='text' className={(textBtn ? "" : "hidden")} onChange={(e) => {setinputText(e.target.value); setDrawAction(inputText);}}>
+          </input>
       </div>
 
         <hr></hr>
@@ -278,6 +352,17 @@ function App() {
           </div>
 
           <hr></hr>
+
+<div className="component">
+  <button 
+    id="transform" 
+    className={"transform btn " + (textBtn ? "btn-dark" : "btn-outline-dark")} 
+    onClick={() => setDrawAction(DrawAction.Select)}
+  >
+    <label className='transform'><i id={"transform"} className="transform bi bi-arrows-move"></i> Select</label>
+  </button>
+</div>
+
 
           <div className="component">
           <button className={"btn btn-outline-dark"} id="clear" onClick={handleClear}>
@@ -310,23 +395,99 @@ function App() {
         >
           <Layer>
             {scribbles.map((scribble) => (
-              <KonvaLine key={scribble.id} points={scribble.points} stroke={scribble.color} strokeWidth={scribble.strokeWidth} />
+              <KonvaLine key={scribble.id} points={scribble.points} stroke={scribble.color} strokeWidth={scribble.strokeWidth}/>
             ))}
             {circles.map((circle) => (
-              <KonvaCircle key={circle.id} x={circle.x} y={circle.y} radius={circle.radius} stroke={circle.color} strokeWidth={circle.strokeWidth}  />
+              <KonvaCircle key={circle.id} x={circle.x} y={circle.y} radius={circle.radius} stroke={circle.color} strokeWidth={circle.strokeWidth}  draggable
+              onDragMove={(e) => {
+                const { x, y } = e.target.position();
+                setCircles((prev) =>
+                  prev.map((c) => (c.id === circle.id ? { ...c, x, y } : c))
+                );
+              }}
+              
+              onClick={onShapeClick}
+
+              // onTransformEnd={(e) => handleTransformEnd(e, "circle")}
+              />
             ))}
             {rectangles.map((rectangle) => (
-              <KonvaRect key={rectangle.id} x={rectangle.x} y={rectangle.y} width={rectangle.width} height={rectangle.height}  stroke={rectangle.color} strokeWidth={rectangle.strokeWidth}  />
+              <KonvaRect key={rectangle.id} x={rectangle.x} y={rectangle.y} width={rectangle.width} height={rectangle.height}  stroke={rectangle.color} strokeWidth={rectangle.strokeWidth}  draggable
+              onDragMove={(e) => {
+                const { x, y } = e.target.position();
+                setRectangles((prev) =>
+                  prev.map((r) => (r.id === rectangle.id ? { ...r, x, y } : r))
+                );
+              }}
+              
+              onClick={onShapeClick}
+              onTransformEnd={(e) => handleTransformEnd(e, "rectangle")}
+              />
             ))}
             {arrows.map((arrow) => (
-              <KonvaArrow key={arrow.id} points={arrow.points} stroke={arrow.color} strokeWidth={arrow.strokeWidth}  />
+              <KonvaArrow key={arrow.id} points={arrow.points} stroke={arrow.color} strokeWidth={arrow.strokeWidth} draggable
+              onDragMove={(e) => {
+                const { x, y } = e.target.position();
+                const dx = x - arrow.points[0];
+                const dy = y - arrow.points[1];
+                setArrows((prev) =>
+                  prev.map((a) =>
+                    a.id === arrow.id
+                      ? { ...a, points: [x, y, a.points[2] + dx, a.points[3] + dy] }
+                      : a
+                  )
+                );
+              }}
+              
+              onClick={onShapeClick}
+              // onTransformEnd={(e) => handleTransformEnd(e, "arrow")}
+              
+              />
             ))}
             {triangles.map((triangle) => (
-              <KonvaTriangle key={triangle.id} x={triangle.x} y={triangle.y} sides={3} radius={Math.sqrt(triangle.width ** 2 + triangle.height ** 2)} stroke={triangle.color} strokeWidth={triangle.strokeWidth}  />
+              <KonvaTriangle key={triangle.id} x={triangle.x} y={triangle.y} sides={3} radius={Math.sqrt(triangle.width ** 2 + triangle.height ** 2)} stroke={triangle.color} strokeWidth={triangle.strokeWidth}   draggable
+              onDragMove={(e) => {
+                const { x, y } = e.target.position();
+                setTriangles((prev) =>
+                  prev.map((t) => (t.id === triangle.id ? { ...t, x, y } : t))
+                );
+              }}
+              onClick={onShapeClick}
+              // onTransformEnd={(e) => handleTransformEnd(e, "triangle")}
+              
+              />
             ))}
             {ellipses.map((ellipse) => (
-              <KonvaEllipse key={ellipse.id} x={ellipse.x} y={ellipse.y} radiusX={ellipse.radiusX} radiusY={ellipse.radiusY}  stroke={ellipse.color} strokeWidth={ellipse.strokeWidth}  />
+              <KonvaEllipse key={ellipse.id} x={ellipse.x} y={ellipse.y} radiusX={ellipse.radiusX} radiusY={ellipse.radiusY}  stroke={ellipse.color} strokeWidth={ellipse.strokeWidth}  draggable
+              onDragMove={(e) => {
+                const { x, y } = e.target.position();
+                setEllipses((prev) =>
+                  prev.map((el) => (el.id === ellipse.id ? { ...el, x, y } : el))
+                );
+              }}
+              
+              onClick={onShapeClick}
+              // onTransformEnd={(e) => handleTransformEnd(e, "ellipse")}
+              
+              />
             ))}
+            {texts.map((text) => (
+              <KonvaText
+                key={text.id}
+                x={text.x}
+                y={text.y}
+                text={text.text}
+                fontSize={text.fontSize}
+                fill={text.fill}
+                draggable
+              />
+            ))}
+<Transformer
+  ref={transformerRef}
+  boundBoxFunc={(oldBox, newBox) => {
+    return newBox;
+  }}
+/>
 
           </Layer>
         </Stage>
