@@ -142,6 +142,7 @@ function App() {
           prev.map((triangle) =>
             triangle.id === currentShapeRef.current ? { ...triangle, width: x - triangle.x, height: y - triangle.y } : triangle
           )
+
         );
         break;
       case DrawAction.Ellipse:
@@ -155,6 +156,8 @@ function App() {
   }, [drawAction]);
 
   function handleClick(e){
+
+    console.log(triangles)
 
     const btnId = e.target.id;
     const x = e.target.className;
@@ -224,8 +227,9 @@ function App() {
               <i id={"circle"} className={"circle bi bi-circle"}/>
             </button>
 
-            <button id={"square"} className={"square btn " + (squareBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}><i
-                id={"square"} className="square bi bi-square"></i></button>
+            <button id={"square"} className={"square btn " + (squareBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+              <i id={"square"} className="square bi bi-square"></i>
+            </button>
 
             <button id={"triangle"} className={"triangle btn " + (triangleBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}><i id={"triangle"} className="triangle bi bi-triangle"></i></button>
 
@@ -262,11 +266,11 @@ function App() {
 
           <div className="component">
           <input className={"form-control form-control-color"} type="color" id="favcolor" onChange={(e) => setColor(e.target.value)} ></input>
-          <label for="favcolor">  Color</label>
+          <label htmlFor="favcolor">  Color</label>
           </div>
 
           <div className="component">
-          <label for="size">Thickness</label>
+          <label htmlFor="size">Thickness</label>
           <input className={"form-range"} type="range" id="size"
           min="1"
           max="10"
@@ -323,8 +327,7 @@ function App() {
             {ellipses.map((ellipse) => (
               <KonvaEllipse key={ellipse.id} x={ellipse.x} y={ellipse.y} radiusX={ellipse.radiusX} radiusY={ellipse.radiusY}  stroke={ellipse.color} strokeWidth={ellipse.strokeWidth}  />
             ))}
-          
-           
+
           </Layer>
         </Stage>
       </div>
