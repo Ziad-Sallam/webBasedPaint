@@ -75,23 +75,11 @@ class test{
     public static void main(String[] args) {
         SaveLoad sl = new SaveLoad();
         Canvas c = new Canvas();
-        Triangle t = new Triangle();
-        t.setY(3);
-        t.setX(5);
-        t.setFill("red");
-        Rect r = new Rect();
-        r.setX(10);
-        r.setY(10);
-        r.setFill("blue");
-        Circle circle = new Circle();
-        circle.setX(10);
-        circle.setY(10);
-        circle.setFill("green");
-        circle.setRadius(7);
-        c.circle.add(circle);
-        c.rect.add(r);
-        c.triangle.add(t);
-        sl.saveXml(c,3);
+        Ellipse e = new Ellipse();
+        e.setRadiusX(122);
+        e.setRadiusY(100);
+        c.ellipse.add(e);
+        sl.saveJson(c,3);
     }
 
 }

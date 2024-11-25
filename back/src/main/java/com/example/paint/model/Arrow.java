@@ -2,16 +2,17 @@ package com.example.paint.model;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.Getter;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 @Component
 @XmlRootElement
-public class Square extends Shape {
-    int length;
+public class Arrow extends Shape {
+    ArrayList<Double> points;
 
     @XmlElement
-    public int getLength() {
-        return length;
+    public ArrayList<Double> getPoints() {
+        return points;
     }
 }

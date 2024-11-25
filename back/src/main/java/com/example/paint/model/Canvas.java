@@ -1,13 +1,11 @@
 package com.example.paint.model;
 
-import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import javax.sound.sampled.Line;
 import javax.xml.bind.annotation.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Component
 @Setter
@@ -15,9 +13,10 @@ import java.util.HashMap;
 public class Canvas {
     public ArrayList<Rect> rect = new ArrayList<>();
     public ArrayList<Circle> circle = new ArrayList<>();
-    public ArrayList<Square> square = new ArrayList<>();
     public ArrayList<Triangle> triangle = new ArrayList<>();
-    public ArrayList<Line> line = new ArrayList<>();
+    public ArrayList<Scribble> scribble = new ArrayList<>();
+    public ArrayList<Arrow> arrow = new ArrayList<>();
+    public ArrayList<Ellipse> ellipse = new ArrayList<>();
 
 
 

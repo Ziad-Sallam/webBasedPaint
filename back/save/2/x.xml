@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <canvas>
-    <triangle>
-        <fill>red</fill>
-        <strokeWidth>0</strokeWidth>
-        <x>5</x>
-        <y>3</y>
-        <radius>0</radius>
-    </triangle>
+    <ellipse>
+        <color>black</color>
+        <id>af865c02-cff8-467e-a0a6-518c6501b3c3</id>
+        <strokeWidth>2.0</strokeWidth>
+        <x>180.5737312148916</x>
+        <y>102.0</y>
+        <radiusX>0.0</radiusX>
+        <radiusY>0.0</radiusY>
+    </ellipse>
+    <ellipse>
+        <color>black</color>
+        <id>ba1a381d-5398-4f0b-bdf0-dddf9354a977</id>
+        <strokeWidth>2.0</strokeWidth>
+        <x>129.5811510336875</x>
+        <y>144.0</y>
+        <radiusX>0.0</radiusX>
+        <radiusY>0.0</radiusY>
+    </ellipse>
+    <ellipse>
+        <color>black</color>
+        <id>358df8d7-bad1-4d30-a426-67510bf040e8</id>
+        <strokeWidth>2.0</strokeWidth>
+        <x>250.56354714987762</x>
+        <y>131.0</y>
+        <radiusX>139.97963186997205</radiusX>
+        <radiusY>36.0</radiusY>
+    </ellipse>
 </canvas>

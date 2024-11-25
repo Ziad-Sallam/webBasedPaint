@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlElement;
 @Setter
 @XmlRootElement
 public class Circle extends Shape {
-    int radius;
+    double radius;
     @XmlElement
-    public int getRadius() {
+    public double getRadius() {
         return radius;
     }
 }

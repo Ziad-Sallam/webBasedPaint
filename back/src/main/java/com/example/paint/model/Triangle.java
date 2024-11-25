@@ -8,11 +8,18 @@ import org.springframework.stereotype.Component;
 @Component
 @XmlRootElement
 public class Triangle extends Shape{
-    int radius;
+
+    double width;
+    double height;
 
     @XmlElement
-    public int getRadius() {
-        return radius;
+    public double getHeight() {
+        return height;
+    }
+
+    @XmlElement
+    public double getWidth() {
+        return width;
     }
 
 

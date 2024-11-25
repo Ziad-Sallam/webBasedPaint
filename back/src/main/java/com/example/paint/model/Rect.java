@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 @Component
 @XmlRootElement
 public class Rect extends Shape {
-    int width;
-    int height;
+    double width;
+    double height;
 
     @XmlElement
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
     @XmlElement
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
