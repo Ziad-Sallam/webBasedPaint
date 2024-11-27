@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Transformer } from 'react-konva';
+import axios from "axios";
 import './App.css'
 import { KonvaEventObject } from "konva/lib/Node";
 import { useState, useRef, useCallback } from "react";
@@ -232,6 +233,43 @@ function App() {
   
     setRedoStack([...redoStack]);
   };
+
+  async function save(){
+
+    const canvas = {
+      rect : rectangles,
+      circle : circles,
+      triangle:triangles,
+      arrow:arrows,
+      ellipse:ellipses,
+      scribble: scribbles
+    };
+    console.log(canvas);
+    try {
+      await axios.post('http://localhost:5000',canvas)
+    }catch(err){
+      console.log(`error message: ${err.message}`);
+    }
+  }
+
+  async function load(){
+    try{
+      const response = await axios.get('http://localhost:5000',{
+        params: { slot: 2}
+      });
+      const data =  response.data;
+      console.log(data);
+      setCircles(data.circle);
+      setRectangles(data.rect)
+      setArrows(data.arrow)
+      setEllipses(data.ellipse)
+      setScribbles(data.scribble)
+      setTriangles(data.triangle)
+
+    }catch(err){
+      console.log(`error message: ${err.message}`);
+    }
+  }
   
 
   const onStageMouseDown = useCallback((e) => {
@@ -434,23 +472,29 @@ function App() {
           <div className={"shapes"}>
             <label className="shapes">Shapes</label>
             <br/>
-            <button id={"arrow"} className={"arrow btn " + (arrowBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+            <button id={"arrow"} className={"arrow btn " + (arrowBtn ? "btn-dark" : "btn-outline-dark")}
+                    onClick={handleClick}>
               <i id={"arrow"} className="arrow bi bi-arrow-up-right"></i>
             </button>
 
-            <button id={"circle"} className={"circle btn " + (circleBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+            <button id={"circle"} className={"circle btn " + (circleBtn ? "btn-dark" : "btn-outline-dark")}
+                    onClick={handleClick}>
               <i id={"circle"} className={"circle bi bi-circle"}/>
             </button>
 
-            <button id={"square"} className={"square btn " + (squareBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+            <button id={"square"} className={"square btn " + (squareBtn ? "btn-dark" : "btn-outline-dark")}
+                    onClick={handleClick}>
               <i id={"square"} className="square bi bi-square"></i>
             </button>
 
-            <button id={"triangle"} className={"triangle btn " + (triangleBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}><i id={"triangle"} className="triangle bi bi-triangle"></i></button>
+            <button id={"triangle"} className={"triangle btn " + (triangleBtn ? "btn-dark" : "btn-outline-dark")}
+                    onClick={handleClick}><i id={"triangle"} className="triangle bi bi-triangle"></i></button>
 
-            <button id={"ellipse"} className={"ellipse btn " + (ellipseBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+            <button id={"ellipse"} className={"ellipse btn " + (ellipseBtn ? "btn-dark" : "btn-outline-dark")}
+                    onClick={handleClick}>
               <svg id={"ellipse"} width={25} height={15} className={"ellipse"}>
-                <ellipse id={"ellipse"} className={"ellipse"} cx="8" cy="5" rx="8" ry="4" stroke="black" strokeWidth="1" fill="none"/>
+                <ellipse id={"ellipse"} className={"ellipse"} cx="8" cy="5" rx="8" ry="4" stroke="black" strokeWidth="1"
+                         fill="none"/>
               </svg>
             </button>
           </div>
@@ -459,91 +503,104 @@ function App() {
         <hr></hr>
 
         <div className="component">
-          <button id={"brush"} className={"brush btn " + (brushBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+          <button id={"brush"} className={"brush btn " + (brushBtn ? "btn-dark" : "btn-outline-dark")}
+                  onClick={handleClick}>
             <label className='brush'><i id={"brush"} className="brush bi bi-brush"></i> Brush</label>
           </button>
         </div>
 
         <div className="component">
-          <button id={"eraser"} className={"eraser btn " + (eraseBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+          <button id={"eraser"} className={"eraser btn " + (eraseBtn ? "btn-dark" : "btn-outline-dark")}
+                  onClick={handleClick}>
             <label className='eraser'><i id={"eraser"} className="eraser bi bi-eraser"></i> Eraser</label>
           </button>
         </div>
 
 
-      <div className="component">
-          <button id={"text"} className={"text btn " + (textBtn ? "btn-dark" : "btn-outline-dark")} onClick={handleClick}>
+        <div className="component">
+          <button id={"text"} className={"text btn " + (textBtn ? "btn-dark" : "btn-outline-dark")}
+                  onClick={handleClick}>
             <label className='text'><i id={"text"} className="text bi bi-fonts"></i> Add text</label>
           </button>
-          <input type='text' className={(textBtn ? "" : "hidden")} onChange={(e) => {setinputText(e.target.value); setDrawAction(inputText);}}>
+          <input type='text' className={(textBtn ? "" : "hidden")} onChange={(e) => {
+            setinputText(e.target.value);
+            setDrawAction(inputText);
+          }}>
           </input>
-      </div>
+        </div>
 
         <hr></hr>
 
-          <div className="component">
-          <input className={"form-control form-control-color"} type="color" id="favcolor" onChange={(e) => setColor(e.target.value)} ></input>
-          <label htmlFor="favcolor">  Color</label>
-          </div>
+        <div className="component">
+          <input className={"form-control form-control-color"} type="color" id="favcolor"
+                 onChange={(e) => setColor(e.target.value)}></input>
+          <label htmlFor="favcolor"> Color</label>
+        </div>
 
-          <div className="component">
+        <div className="component">
           <label htmlFor="size">Thickness</label>
           <input className={"form-range"} type="range" id="size"
-          min="1"
-          max="10"
-          value={strokeWidth} onChange={(e) => setStrokeWidth(Number(e.target.value))}></input>
-          </div>
+                 min="1"
+                 max="10"
+                 value={strokeWidth} onChange={(e) => setStrokeWidth(Number(e.target.value))}></input>
+        </div>
 
-          <hr></hr>
+        <hr></hr>
 
-<div className="component">
-  <button 
-    id="transform" 
-    className={"transform btn " + (textBtn ? "btn-dark" : "btn-outline-dark")} 
-    onClick={() => setDrawAction(DrawAction.Select)}
-  >
-    <label className='transform'><i id={"transform"} className="transform bi bi-arrows-move"></i> Select</label>
-  </button>
-</div>
-<div className="component">
-  <button
-    id="copy"
-    className={"btn btn-outline-dark"}
-    onClick={onCopyShape}
-  >
-    <i className="bi bi-files"></i> Copy
-  </button>
-</div>
+        <div className="component">
+          <button
+              id="transform"
+              className={"transform btn " + (textBtn ? "btn-dark" : "btn-outline-dark")}
+              onClick={() => setDrawAction(DrawAction.Select)}
+          >
+            <label className='transform'><i id={"transform"} className="transform bi bi-arrows-move"></i> Select</label>
+          </button>
+        </div>
+        <div className="component">
+          <button
+              id="copy"
+              className={"btn btn-outline-dark"}
+              onClick={onCopyShape}
+          >
+            <i className="bi bi-files"></i> Copy
+          </button>
+        </div>
 
-          <div className="component">
+        <div className="component">
           <button className={"btn btn-outline-dark"} id="clear" onClick={handleClear}>
             <i className="bi bi-trash"></i> clear
           </button>
-          </div>
+        </div>
 
-          <div className="component">
+        <div className="component">
           <button id="undo" className="btn btn-outline-dark" onClick={handleUndo}>
             <i className="bi bi-arrow-counterclockwise"></i> Undo
           </button>
-          </div>
-          <div className="component">
+        </div>
+        <div className="component">
           <button id="redo" className="btn btn-outline-dark" onClick={handleRedo}>
-           <i className="bi bi-arrow-clockwise"></i> Redo
+            <i className="bi bi-arrow-clockwise"></i> Redo
           </button>
-          </div>
+        </div>
 
         <div className="component">
-          <button id="save" className={"btn btn-outline-dark"}><i className="bi bi-floppy"></i> save</button>
+          <button id="save" className={"btn btn-outline-dark"} onClick={save}><i className="bi bi-floppy"></i> save
+          </button>
+        </div>
+
+        <div className="component">
+          <button id="load" className={"btn btn-outline-dark"} onClick={load}><i className="bi bi-box-arrow-in-down"></i> load
+          </button>
         </div>
 
       </section>
 
       <div className="screen">
         <Stage
-          width={window.innerWidth*0.9}
-          height={window.innerHeight}
-          onMouseDown={onStageMouseDown}
-          onMouseMove={onStageMouseMove}
+            width={window.innerWidth * 0.9}
+            height={window.innerHeight}
+            onMouseDown={onStageMouseDown}
+            onMouseMove={onStageMouseMove}
           onMouseUp={onStageMouseUp}
           ref={stageRef}
         >
