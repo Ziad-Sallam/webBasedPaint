@@ -1,13 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
 import { Transformer } from 'react-konva';
-
 import './App.css'
 import { KonvaEventObject } from "konva/lib/Node";
-
-
 import { useState, useRef, useCallback } from "react";
+import { useEffect } from "react";
 import {
   Stage,
   Layer,
@@ -62,22 +59,106 @@ function App() {
   const isDrawingRef = useRef(false);
   const currentShapeRef = useRef(null);
   const transformerRef = useRef(null);
-
-
-
   const [selectedShape, setSelectedShape] = useState(null);
+  const [undoStack, setUndoStack] = useState([]);
+  const [redoStack, setRedoStack] = useState([]);
   
-
   const onShapeClick = useCallback(
     (e) => {
       if (drawAction !== DrawAction.Select) return;
       const currentTarget = e.target;
-      setSelectedShape(currentTarget);
+      const shapeType = currentTarget.attrs.type; 
+      setSelectedShape({
+        shape: currentTarget,
+        type: shapeType,
+        id: currentTarget.attrs.id, 
+      });
       transformerRef.current.nodes([currentTarget]);
       transformerRef.current.getLayer().batchDraw();
     },
     [drawAction]
   );
+
+  const onCopyShape = () => {
+    if (!selectedShape) return;
+    const { type, shape } = selectedShape;
+    const { x, y, width, height, radius, stroke, strokeWidth, points, sides} = shape.attrs;
+    let shapeCopy = { ...shape.attrs };  
+    if (type === 'arrow') {
+      shapeCopy.points = points.map((point, index) =>
+        index % 2 === 0 ? point + 20 : point + 20 
+      );
+    } else {
+      shapeCopy.x = (x || 0) + 20;
+      shapeCopy.y = (y || 0) + 20;
+    }
+  
+    shapeCopy.color = shapeCopy.stroke;
+    const newShape = { ...shapeCopy, id: uuidv4() };
+    switch (type) {
+      case 'rectangle':
+        setRectangles((prev) => [...prev, newShape]);
+        break;
+      case 'circle':
+        setCircles((prev) => [...prev, newShape]);
+        break;
+      case 'ellipse':
+        setEllipses((prev) => [...prev, newShape]);
+        break;
+      case 'triangle':
+        setTriangles((prev) => [...prev, newShape]);
+        break;
+      case 'arrow':
+        setArrows((prev) => [...prev, newShape]);
+        break;
+      case 'text':
+        setTexts((prev) => [...prev, newShape]);
+        break;
+      default:
+        break;
+    }
+
+  };
+  
+  const onDeleteShape = () => {
+    if (!selectedShape) return; 
+    const {type, id } = selectedShape;
+    if (type === "rectangle") {
+      setRectangles((prevRectangles) =>
+        prevRectangles.filter((rect) => rect.id!== id)
+        
+      );
+
+      console.log("delete",id)
+    } else if (type === "circle") {
+      setCircles((prevCircles) =>
+        prevCircles.filter((circle) => circle.id !== id)
+      );
+    }else if(type=="arrow"){
+      setArrows((prevarrows)=>prevarrows.filter((arr=>arr.id!=id))
+      )
+    }else if(type=="ellipse"){
+      setEllipses((preveli)=>preveli.filter((eli=>eli.id!=id))
+    )
+  }else if(type=="triangle"){
+    setTriangles((prevtri)=>prevtri.filter((tri=>tri.id!=id))
+  )
+  }
+  
+    setSelectedShape(null);
+    transformerRef.current.nodes([]);
+  };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Delete") {
+        onDeleteShape();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedShape]);
+
   const handleClear = () => {
     setScribbles([]);
     setCircles([]);
@@ -87,20 +168,83 @@ function App() {
     setTriangles([]);
     setTexts([]);
   };
+  const saveStateToUndoStack = () => {
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        scribbles,
+        circles,
+        rectangles,
+        arrows,
+        triangles,
+        ellipses,
+        texts,
+      },
+    ]);
+  };
+  const handleUndo = () => {
+    if (undoStack.length === 0) return;
+  
+    const lastState = undoStack.pop();
+    setRedoStack((prev) => [
+      ...prev,
+      {
+        scribbles,
+        circles,
+        rectangles,
+        arrows,
+        triangles,
+        ellipses,
+        texts,
+      },
+    ]);
+    setScribbles(lastState.scribbles);
+    setCircles(lastState.circles);
+    setRectangles(lastState.rectangles);
+    setArrows(lastState.arrows);
+    setTriangles(lastState.triangles);
+    setEllipses(lastState.ellipses);
+    setTexts(lastState.texts);
+    setUndoStack([...undoStack]);
+  };
+  const handleRedo = () => {
+    if (redoStack.length === 0) return;
+    const nextState = redoStack.pop();
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        scribbles,
+        circles,
+        rectangles,
+        arrows,
+        triangles,
+        ellipses,
+        texts,
+      },
+    ]);
+    setScribbles(nextState.scribbles);
+    setCircles(nextState.circles);
+    setRectangles(nextState.rectangles);
+    setArrows(nextState.arrows);
+    setTriangles(nextState.triangles);
+    setEllipses(nextState.ellipses);
+    setTexts(nextState.texts);
+  
+    setRedoStack([...redoStack]);
+  };
+  
 
   const onStageMouseDown = useCallback((e) => {
+    saveStateToUndoStack();
+    setRedoStack([]);
     const stage = stageRef.current;
     const clickedOnStage = e.target === stage;
-  
-    // Handle deselection if in "Select" mode
     if (clickedOnStage && drawAction === DrawAction.Select) {
       setSelectedShape(null);
       transformerRef.current.nodes([]);
       transformerRef.current.getLayer()?.batchDraw();
       return;
     }
-  
-    // Proceed with drawing logic only if not in "Select" mode
     if (drawAction !== DrawAction.Select) {
       isDrawingRef.current = true;
       const pos = stage.getPointerPosition();
@@ -134,8 +278,7 @@ function App() {
         break;
     }}
   }, [drawAction, color, strokeWidth]);
-
-
+  
   const onStageMouseMove = useCallback(() => {
     if (!isDrawingRef.current) return;
     const stage = stageRef.current;
@@ -362,7 +505,15 @@ function App() {
     <label className='transform'><i id={"transform"} className="transform bi bi-arrows-move"></i> Select</label>
   </button>
 </div>
-
+<div className="component">
+  <button
+    id="copy"
+    className={"btn btn-outline-dark"}
+    onClick={onCopyShape}
+  >
+    <i className="bi bi-files"></i> Copy
+  </button>
+</div>
 
           <div className="component">
           <button className={"btn btn-outline-dark"} id="clear" onClick={handleClear}>
@@ -370,13 +521,16 @@ function App() {
           </button>
           </div>
 
-        <div className="component">
-          <button id="undo" className={"btn btn-outline-dark"}><i className="bi bi-arrow-counterclockwise"></i> undo</button>
-        </div>
-
-        <div className="component">
-          <button id="redo" className={"btn btn-outline-dark"}><i className="bi bi-arrow-clockwise"></i> redo</button>
-        </div>
+          <div className="component">
+          <button id="undo" className="btn btn-outline-dark" onClick={handleUndo}>
+            <i className="bi bi-arrow-counterclockwise"></i> Undo
+          </button>
+          </div>
+          <div className="component">
+          <button id="redo" className="btn btn-outline-dark" onClick={handleRedo}>
+           <i className="bi bi-arrow-clockwise"></i> Redo
+          </button>
+          </div>
 
         <div className="component">
           <button id="save" className={"btn btn-outline-dark"}><i className="bi bi-floppy"></i> save</button>
@@ -405,10 +559,9 @@ function App() {
                   prev.map((c) => (c.id === circle.id ? { ...c, x, y } : c))
                 );
               }}
-              
               onClick={onShapeClick}
-
-              // onTransformEnd={(e) => handleTransformEnd(e, "circle")}
+              type="circle"  
+              id={circle.id}
               />
             ))}
             {rectangles.map((rectangle) => (
@@ -418,10 +571,13 @@ function App() {
                 setRectangles((prev) =>
                   prev.map((r) => (r.id === rectangle.id ? { ...r, x, y } : r))
                 );
+                
               }}
               
               onClick={onShapeClick}
-              onTransformEnd={(e) => handleTransformEnd(e, "rectangle")}
+              id={rectangle.id}
+              type="rectangle" 
+              
               />
             ))}
             {arrows.map((arrow) => (
@@ -440,9 +596,8 @@ function App() {
               }}
               
               onClick={onShapeClick}
-              // onTransformEnd={(e) => handleTransformEnd(e, "arrow")}
-              
-              />
+              type="arrow" 
+              id={arrow.id}/>
             ))}
             {triangles.map((triangle) => (
               <KonvaTriangle key={triangle.id} x={triangle.x} y={triangle.y} sides={3} radius={Math.sqrt(triangle.width ** 2 + triangle.height ** 2)} stroke={triangle.color} strokeWidth={triangle.strokeWidth}   draggable
@@ -453,8 +608,8 @@ function App() {
                 );
               }}
               onClick={onShapeClick}
-              // onTransformEnd={(e) => handleTransformEnd(e, "triangle")}
-              
+              type="triangle" 
+              id={triangle.id}
               />
             ))}
             {ellipses.map((ellipse) => (
@@ -465,10 +620,9 @@ function App() {
                   prev.map((el) => (el.id === ellipse.id ? { ...el, x, y } : el))
                 );
               }}
-              
               onClick={onShapeClick}
-              // onTransformEnd={(e) => handleTransformEnd(e, "ellipse")}
-              
+              type="ellipse" 
+              id={ellipse.id}
               />
             ))}
             {texts.map((text) => (
@@ -488,12 +642,10 @@ function App() {
     return newBox;
   }}
 />
-
           </Layer>
         </Stage>
       </div>
     </div>
   );
 }
-
 export default App;
