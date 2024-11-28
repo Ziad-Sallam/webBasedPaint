@@ -17,8 +17,7 @@ public class Canvas {
     public ArrayList<Scribble> scribble = new ArrayList<>();
     public ArrayList<Arrow> arrow = new ArrayList<>();
     public ArrayList<Ellipse> ellipse = new ArrayList<>();
-
-
+    public ArrayList<Text> text = new ArrayList<>();
 
 //    @XmlAnyElement(lax = true)
 //    public ArrayList<Rect> getRects() {

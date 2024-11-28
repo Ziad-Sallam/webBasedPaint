@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 @Service
 public class SaveLoad {
-
     public void saveJson(Canvas drawing,int slot) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -24,7 +23,6 @@ public class SaveLoad {
         catch (IOException e) {
             e.printStackTrace();
         }
-
     }
     public void saveXml(Canvas drawing,int slot) {
         try { // Create JAXB context and marshaller

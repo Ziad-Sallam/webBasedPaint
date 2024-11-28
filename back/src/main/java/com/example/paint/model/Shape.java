@@ -25,15 +25,16 @@ public class Shape {
     public double getY() {
         return y;
     }
+
     @XmlElement
     public String getColor() {
         return color;
     }
+
     @XmlElement
     public double getStrokeWidth() {
         return strokeWidth;
     }
-
 
     @XmlElement
     public String getId() {
