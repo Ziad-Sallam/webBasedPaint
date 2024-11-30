@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @XmlRootElement
 public class Text extends Shape {
     public String text;
-    public double fontsize;
+    public double fontSize;
 
     @XmlElement
     public String getText(){
@@ -16,8 +16,8 @@ public class Text extends Shape {
     }
 
     @XmlElement
-    public double getFontsize(){
-        return fontsize;
+    public double getFontSize(){
+        return fontSize;
     }
 
 

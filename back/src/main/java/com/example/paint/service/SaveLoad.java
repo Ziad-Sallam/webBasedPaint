@@ -28,11 +28,8 @@ public class SaveLoad {
         try { // Create JAXB context and marshaller
             JAXBContext context = JAXBContext.newInstance(Canvas.class);
             Marshaller marshaller = context.createMarshaller();
-
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1"); // Optional: Format the XML output
-
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Write the object to an XML file
-
             marshaller.marshal(drawing, new File("back/save/"+slot +"/x.xml")); // Write to console (for demonstration)
             marshaller.marshal(drawing, System.out);
         } catch (JAXBException e) {

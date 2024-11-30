@@ -14,13 +14,13 @@ public class Controller {
     @Autowired
     SaveLoad sl;
 
-    @PostMapping(value = "/")
+    @PostMapping(value = "/save")
     public void save(@RequestBody Canvas canvas) {
         sl.saveJson(canvas, 2);
         sl.saveXml(canvas, 2);
     }
 
-    @GetMapping(value = "/", params = "slot")
+    @GetMapping(value = "/load", params = "slot")
     public Canvas loadJson(@Param("slot") int slot) {
         return sl.LoadJson(slot);
     }
