@@ -13,7 +13,7 @@ body{
 }
 
 hr {
-  margin: 10px 0; 
+  margin: 10px 0;
 }
 
 img{
@@ -30,7 +30,7 @@ i{
 
 button{
 
-  display: flex; 
+  display: flex;
   align-items: center;
   cursor: pointer;
   border-radius: 5px;
@@ -38,9 +38,9 @@ button{
 }
 
 .button-icon {
-  margin-right: 8px; 
-  width: 20px; 
-  height: 20px; 
+  margin-right: 8px;
+  width: 20px;
+  height: 20px;
 }
 
 .container{
@@ -59,8 +59,8 @@ section{
 }
 
 .tools{
-  height: 80vh;
-  width: 60vw;
+  height: 90vh;
+  width: 65vw;
   padding: 10px 10px 0;
 }
 
@@ -75,7 +75,7 @@ section{
 .screen{
   background-color: white;
   width: 90%;
-  height: 100vh;
+  height: 90vh;
 }
 .hidden{
   display: none;
