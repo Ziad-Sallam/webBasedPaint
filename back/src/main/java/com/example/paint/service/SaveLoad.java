@@ -1,7 +1,10 @@
 package com.example.paint.service;
+import java.awt.*;
 import java.io.File;
 
 import com.example.paint.model.*;
+import com.example.paint.model.Canvas;
+import com.example.paint.model.Shape;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.xml.bind.Marshaller;
@@ -24,6 +27,7 @@ public class SaveLoad {
             e.printStackTrace();
         }
     }
+
     public void saveXml(Canvas drawing,int slot) {
         try { // Create JAXB context and marshaller
             JAXBContext context = JAXBContext.newInstance(Canvas.class);
@@ -64,6 +68,44 @@ public class SaveLoad {
         }
         return result;
     }
+
+    public Shape1 create(String name,double x, String id, double y, String color, double strokeWidth, String text){
+        if(name.equalsIgnoreCase("rectangle")){
+            return new Rect(id,x,y,color,strokeWidth);
+        }
+        else if(name.equalsIgnoreCase("circle")){
+            return new Circle(id,x,y,color,strokeWidth);
+        }
+        else if(name.equalsIgnoreCase("triangle")){
+            return new Triangle(id,x,y,color,strokeWidth);
+        }
+        else if(name.equalsIgnoreCase("scribble")){
+            return new Scribble(id,x,y,color,strokeWidth);
+
+        }
+        else if(name.equalsIgnoreCase("Text")){
+            return new Text(id,x,y,color,strokeWidth,text);
+        }
+        else if(name.equalsIgnoreCase("ellipse")){
+            return new Ellipse(id,x,y,color,strokeWidth);
+        }
+        else if(name.equalsIgnoreCase("arrow")){
+            return new Arrow(id,x,y,color,strokeWidth);
+        }
+        else if(name.equalsIgnoreCase("line")){
+            return new Line(id,x,y,color,strokeWidth);
+        }
+        if(name.equalsIgnoreCase("square")){
+            return new Square(id,x,y,color,strokeWidth);
+        }
+
+        return null;
+    }
+
+    public Shape1 clone(Shape1 shape){
+        return shape.clone();
+    }
+
 }
 
 class test{
@@ -75,6 +117,7 @@ class test{
         e.setRadiusY(100);
         c.ellipse.add(e);
         sl.saveJson(c,3);
+
     }
 
 }

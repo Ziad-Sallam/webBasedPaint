@@ -18,6 +18,8 @@ public class Canvas {
     public ArrayList<Arrow> arrow = new ArrayList<>();
     public ArrayList<Ellipse> ellipse = new ArrayList<>();
     public ArrayList<Text> text = new ArrayList<>();
+    public ArrayList<Square> Square = new ArrayList<>();
+    public ArrayList<Line> Line = new ArrayList<>();
 
 //    @XmlAnyElement(lax = true)
 //    public ArrayList<Rect> getRects() {

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @XmlRootElement
 @Setter
 @Getter
-public class Arrow extends Shape implements Shape1,Cloneable {
+public class Line extends Shape implements Shape1,Cloneable {
     ArrayList<Double> points = new ArrayList<>();
 
     @XmlElement
@@ -19,18 +19,18 @@ public class Arrow extends Shape implements Shape1,Cloneable {
         return points;
     }
 
-    public Arrow() {
+    public Line() {
         super();
     }
-    public Arrow(String id,double x, double y, String color, double strokeWidth) {
+    public Line(String id,double x, double y, String color, double strokeWidth) {
         super(x, id, y, color, strokeWidth);
         points.add(x);points.add(y);points.add(x);points.add(y);
 
     }
 
     @Override
-    public Arrow clone() {
-        Arrow clone = (Arrow) super.clone();
+    public Line clone() {
+        Line clone = (Line) super.clone();
         // TODO: copy mutable state here, so the clone can't change the internals of the original
         clone.points = new ArrayList<>(points);
         return clone;
