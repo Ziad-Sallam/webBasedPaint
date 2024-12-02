@@ -1,15 +1,15 @@
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/**{*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  box-sizing: border-box;*/
+/*}*/
 
 body{
-  display: flex;
+  /*display: flex;*/
   background-color:bisque;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  /*align-items: center;*/
+  /*justify-content: center;*/
+  /*min-height: 100vh;*/
 }
 
 hr {
@@ -29,9 +29,8 @@ i{
 }
 
 button{
-
   display: flex;
-  align-items: center;
+  /*align-items: center;*/
   cursor: pointer;
   border-radius: 5px;
   padding: 5px 10px;
@@ -45,12 +44,13 @@ button{
 
 .container{
   display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: start;
   width: 100%;
   max-width: 1050px;
   gap: 10px;
   padding: 10px;
-
-
 }
 
 section{
@@ -68,15 +68,18 @@ section{
   padding: 7px;
   width: 190px;
 }
+
 .shapes button{
   border: none;
   width: 35px;
 }
+
 .screen{
   background-color: white;
   width: 90%;
   height: 90vh;
 }
+
 .hidden{
   display: none;
 }
